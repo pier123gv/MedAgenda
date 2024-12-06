@@ -5,7 +5,7 @@ import axios from 'axios';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import Modal from 'react-modal';
 
-Modal.setAppElement('#root');
+Modal.setAppElement('#root'); 
 
 const localizer = momentLocalizer(moment);
 
@@ -19,7 +19,6 @@ const MyCalendar = () => {
     id_dr_encar: '',
     start: '',
     end: '',
-    id: '', // Added id field
   });
 
   useEffect(() => {
@@ -33,7 +32,7 @@ const MyCalendar = () => {
         id: appointment.id_cita,
         title: appointment.motivo,
         start: new Date(appointment.fecha_hora_cita),
-        end: new Date(new Date(appointment.fecha_hora_cita).getTime() + 30 * 60000),
+        end: new Date(new Date(appointment.fecha_hora_cita).getTime() + 30 * 60000), 
       }));
       setEvents(formattedEvents);
     } catch (error) {
@@ -43,18 +42,17 @@ const MyCalendar = () => {
 
   const handleSelect = ({ start }) => {
     setSelectedSlot(start);
-    setAppointmentDetails({ ...appointmentDetails, start: start, end: start });
+    setAppointmentDetails({ ...appointmentDetails, start: start, end: start }); 
     setModalIsOpen(true);
   };
 
   const handleEventClick = (event) => {
     setAppointmentDetails({
       motivo: event.title,
-      id_paciente_invol: '',
-      id_dr_encar: '',
+      id_paciente_invol: '', 
+      id_dr_encar: '', 
       start: event.start,
       end: event.end,
-      id: event.id, // Set id for the selected event
     });
     setModalIsOpen(true);
   };
@@ -70,11 +68,12 @@ const MyCalendar = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    
     const formattedStart = moment(appointmentDetails.start).format('YYYY-MM-DD HH:mm:ss');
     const formattedEnd = moment(appointmentDetails.end).format('YYYY-MM-DD HH:mm:ss');
 
     const newAppointment = {
-      fecha_hora_cita: formattedStart,
+      fecha_hora_cita: formattedStart, 
       ...appointmentDetails,
       estado_cita: 'Activa',
     };
@@ -82,21 +81,10 @@ const MyCalendar = () => {
     try {
       await axios.post('http://localhost:5000/api/citas', newAppointment);
       alert('Appointment scheduled successfully');
-      fetchAppointments();
-      closeModal();
+      fetchAppointments(); 
+      closeModal(); 
     } catch (error) {
       console.error('Error scheduling appointment:', error);
-    }
-  };
-
-  const handleDeleteAppointment = async (id) => {
-    try {
-      await axios.delete(`http://localhost:5000/api/citas/${id}`);
-      alert('Appointment deleted successfully');
-      fetchAppointments();
-      closeModal();
-    } catch (error) {
-      console.error('Error deleting appointment:', error);
     }
   };
 
@@ -108,7 +96,6 @@ const MyCalendar = () => {
       id_dr_encar: '',
       start: '',
       end: '',
-      id: '', // Reset id
     });
   };
 
@@ -123,13 +110,13 @@ const MyCalendar = () => {
           endAccessor="end"
           selectable
           onSelectSlot={handleSelect}
-          onSelectEvent={handleEventClick}
-          style={{ height: 500, margin: '20px 0' }}
+          onSelectEvent={handleEventClick} 
+          style={{ height: 500, margin: '20px 0' }} 
         />
       </div>
-
+      
       <Modal isOpen={modalIsOpen} onRequestClose={closeModal}>
-        <h2>{appointmentDetails.id ? 'Editar Cita' : 'Agendar Cita'}</h2>
+        <h2>{appointmentDetails.motivo ? 'Editar Cita' : 'Agendar Cita'}</h2>
         <form onSubmit={handleSubmit}>
           <div>
             <label>Razón: </label>
@@ -183,16 +170,6 @@ const MyCalendar = () => {
           </div>
           <button type="submit">Confirmar</button>
           <button type="button" onClick={closeModal}>Cancelar</button>
-
-          {appointmentDetails.id && (
-            <button
-              type="button"
-              className="modal-delete-button"
-              onClick={() => handleDeleteAppointment(appointmentDetails.id)}
-            >
-              Eliminar Cita
-            </button>
-          )}
         </form>
       </Modal>
     </div>

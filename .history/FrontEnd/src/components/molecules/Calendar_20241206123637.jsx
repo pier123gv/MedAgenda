@@ -19,7 +19,7 @@ const MyCalendar = () => {
     id_dr_encar: '',
     start: '',
     end: '',
-    id: '', // Added id field
+    id: '', // Added to store the appointment ID
   });
 
   useEffect(() => {
@@ -54,7 +54,7 @@ const MyCalendar = () => {
       id_dr_encar: '',
       start: event.start,
       end: event.end,
-      id: event.id, // Set id for the selected event
+      id: event.id, // Store the appointment ID when clicked
     });
     setModalIsOpen(true);
   };
@@ -91,10 +91,20 @@ const MyCalendar = () => {
 
   const handleDeleteAppointment = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/citas/${id}`);
-      alert('Appointment deleted successfully');
-      fetchAppointments();
-      closeModal();
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5000/api/citas/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete appointment');
+      }
+
+      // Remove the deleted appointment from the state
+      setEvents((prevEvents) => prevEvents.filter((event) => event.id !== id));
     } catch (error) {
       console.error('Error deleting appointment:', error);
     }
@@ -108,7 +118,7 @@ const MyCalendar = () => {
       id_dr_encar: '',
       start: '',
       end: '',
-      id: '', // Reset id
+      id: '', // Reset the ID
     });
   };
 
@@ -129,7 +139,7 @@ const MyCalendar = () => {
       </div>
 
       <Modal isOpen={modalIsOpen} onRequestClose={closeModal}>
-        <h2>{appointmentDetails.id ? 'Editar Cita' : 'Agendar Cita'}</h2>
+        <h2>{appointmentDetails.motivo ? 'Editar Cita' : 'Agendar Cita'}</h2>
         <form onSubmit={handleSubmit}>
           <div>
             <label>Razón: </label>
@@ -181,15 +191,18 @@ const MyCalendar = () => {
               required
             />
           </div>
+          <div>
+            <label>ID Cita: </label>
+            <input
+              type="text"
+              value={appointmentDetails.id}
+              disabled
+            />
+          </div>
           <button type="submit">Confirmar</button>
           <button type="button" onClick={closeModal}>Cancelar</button>
-
           {appointmentDetails.id && (
-            <button
-              type="button"
-              className="modal-delete-button"
-              onClick={() => handleDeleteAppointment(appointmentDetails.id)}
-            >
+            <button type="button" onClick={() => handleDeleteAppointment(appointmentDetails.id)}>
               Eliminar Cita
             </button>
           )}

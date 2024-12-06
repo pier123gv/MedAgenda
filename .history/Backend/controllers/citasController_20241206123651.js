@@ -15,29 +15,17 @@ export const getAllCitas = async (req, res) => {
 export const addCita = async (req, res) => {
   const { fecha_hora_cita, id_paciente_invol, id_dr_encar, motivo, estado_cita } = req.body;
 
-  // Disable foreign key checks temporarily
-  const disableFKQuery = 'SET foreign_key_checks = 0;';
-  const enableFKQuery = 'SET foreign_key_checks = 1;';
-  
-  const insertCitaQuery = 'INSERT INTO citas (fecha_hora_cita, id_paciente_invol, id_dr_encar, motivo, estado_cita) VALUES (?, ?, ?, ?, ?)';
+  const sql =
+    'INSERT INTO citas (fecha_hora_cita, id_paciente_invol, id_dr_encar, motivo, estado_cita) VALUES (?, ?, ?, ?, ?)';
   
   try {
-    // Disable foreign key checks
-    await connection.query(disableFKQuery);
-
-    // Insert the new appointment
-    const [result] = await connection.query(insertCitaQuery, [fecha_hora_cita, id_paciente_invol, id_dr_encar, motivo, estado_cita]);
-    
-    // Re-enable foreign key checks
-    await connection.query(enableFKQuery);
-
+    const [result] = await connection.query(sql, [fecha_hora_cita, id_paciente_invol, id_dr_encar, motivo, estado_cita]);
     res.status(201).json({ message: 'Appointment created successfully', id: result.insertId });
   } catch (err) {
     console.error('Error adding appointment:', err);
     res.status(500).json({ error: 'Database error' });
   }
 };
-
 
 // Eliminar una cita
 export const deleteCita = async (req, res) => {
