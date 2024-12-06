@@ -56,3 +56,21 @@ export const addDoctor = async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 };
+
+export const eliminarDoctor = async (req, res) => {
+  try {
+    const { correo } = req.params;
+
+    // Elimina el doctor con el correo proporcionado
+    const [result] = await connection.query('DELETE FROM doctores WHERE dr_correo = ?', [correo]);
+
+    if (result.affectedRows > 0) {
+      res.status(200).json({ message: 'Doctor eliminado correctamente' });
+    } else {
+      res.status(404).json({ message: 'No se encontró un doctor con ese correo' });
+    }
+  } catch (error) {
+    console.error('Error al eliminar doctor:', error);
+    res.status(500).json({ message: 'Error al eliminar el doctor. Intente nuevamente.' });
+  }
+};
