@@ -81,6 +81,30 @@ const BDPersonal = () => {
     }
   };
 
+  // Función para eliminar doctor
+  const handleDelete = async (correo) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5000/api/doctores/eliminar/${correo}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete doctor');
+      }
+
+      const data = await response.json();
+      setResponseMessage(data.message);
+      fetchDoctors(); // Refresca la lista de doctores después de eliminar uno
+    } catch (error) {
+      console.error('Error deleting doctor:', error);
+      setErrorMessage('Failed to delete doctor. Please try again.');
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -183,6 +207,7 @@ const BDPersonal = () => {
               <th>Nombre</th>
               <th>Especialidad</th>
               <th>Teléfono</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -193,6 +218,10 @@ const BDPersonal = () => {
                   <td>{doctor.dr_nombre1} {doctor.dr_apellido1}</td>
                   <td>{doctor.dr_especialidad}</td>
                   <td>{doctor.dr_telefono}</td>
+                  <td>
+                    {/* Botón de eliminar */}
+                    <button onClick={() => handleDelete(doctor.dr_correo)}>Eliminar</button>
+                  </td>
                 </tr>
               );
             })}
