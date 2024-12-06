@@ -146,7 +146,7 @@ const BDClientes = () => {
     catch (error) {
       console.error('Error deleting patient:', error);
     }
-    fetchPacientes();
+    
   };
 
   // Filtrar pacientes por nombre o cédula

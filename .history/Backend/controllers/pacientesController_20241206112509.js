@@ -13,36 +13,24 @@ export const getAllPacientes = async (req, res) => {
 
 
 export const deletePaciente = async (req, res) => {
-  const pacienteId = req.params.id;
-  console.log(`Deleting patient with ID: ${pacienteId}`);
+  const query = 'DELETE FROM pacientes WHERE id_paciente = ?'; // SQL query to delete a patient by ID
+  const { id_paciente } = req.params; // Extract id_paciente from URL parameters
 
   try {
-    // Disable foreign key checks
-    await connection.execute('SET FOREIGN_KEY_CHECKS = 0');
-
-    // Perform the delete operation
-    const deletePacienteQuery = 'DELETE FROM pacientes WHERE id_paciente = ?';
-    const [result] = await connection.execute(deletePacienteQuery, [pacienteId]);
+    const [result] = await pool.query(query, [id_paciente]); // Execute query using parameterized inputs
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({ message: 'Patient not found' });
+      // No rows were affected, meaning the patient does not exist
+      return res.status(404).json({ message: 'Paciente no encontrado' });
     }
 
-    // Re-enable foreign key checks
-    await connection.execute('SET FOREIGN_KEY_CHECKS = 1');
-
-    res.status(200).json({ message: 'Patient deleted successfully' });
+    // Successful deletion
+    return res.status(200).json({ message: 'Paciente eliminado exitosamente' });
   } catch (error) {
-    console.error('Error deleting patient:', error);
-    
-    // Re-enable foreign key checks in case of error
-    await connection.execute('SET FOREIGN_KEY_CHECKS = 1');
-
-    res.status(500).json({ message: 'Failed to delete patient' });
+    console.error('Error deleting paciente:', error);
+    return res.status(500).json({ message: 'Error al eliminar el paciente' });
   }
 };
-
-
 
 
 

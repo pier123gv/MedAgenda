@@ -23,7 +23,6 @@ const BDClientes = () => {
   
   // Nuevo estado para la búsqueda
   const [searchTerm, setSearchTerm] = useState('');
-  const [deleteId, setDeleteId] = useState('');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -124,29 +123,6 @@ const BDClientes = () => {
     } catch (error) {
       console.error('Error adding new patient:', error);
     }
-  };
-
-  const handleDeletePatient = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/pacientes/deletePaciente/${deleteId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete patient');
-      }
-
-      setPacientes((prev) => prev.filter((paciente) => paciente.id_paciente !== deleteId));
-      setDeleteId('');
-    } 
-    catch (error) {
-      console.error('Error deleting patient:', error);
-    }
-    fetchPacientes();
   };
 
   // Filtrar pacientes por nombre o cédula
@@ -262,24 +238,6 @@ const BDClientes = () => {
             ))}
           </tbody>
         </table>
-
-        {/* Deletion Input and Button */}
-        <div className="delete-patient-container">
-          <input
-            type="text"
-            className="delete-patient-input"
-            placeholder="Enter patient ID to delete"
-            value={deleteId}
-            onChange={(e) => setDeleteId(e.target.value)}
-          />
-          <button 
-            className="delete-patient-button" 
-            onClick={handleDeletePatient}
-          >
-            Delete Patient
-          </button>
-        </div>
-
       </div>
     </div>
   );

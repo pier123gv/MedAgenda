@@ -143,10 +143,11 @@ const BDClientes = () => {
       setPacientes((prev) => prev.filter((paciente) => paciente.id_paciente !== deleteId));
       setDeleteId('');
     } 
+    
+    fetchPacientes();
     catch (error) {
       console.error('Error deleting patient:', error);
     }
-    fetchPacientes();
   };
 
   // Filtrar pacientes por nombre o cédula

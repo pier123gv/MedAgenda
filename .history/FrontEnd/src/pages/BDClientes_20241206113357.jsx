@@ -129,7 +129,7 @@ const BDClientes = () => {
   const handleDeletePatient = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/pacientes/deletePaciente/${deleteId}`, {
+      const response = await fetch(`http://localhost:5000/api/pacientes/${deleteId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -142,11 +142,9 @@ const BDClientes = () => {
 
       setPacientes((prev) => prev.filter((paciente) => paciente.id_paciente !== deleteId));
       setDeleteId('');
-    } 
-    catch (error) {
+    } catch (error) {
       console.error('Error deleting patient:', error);
     }
-    fetchPacientes();
   };
 
   // Filtrar pacientes por nombre o cédula

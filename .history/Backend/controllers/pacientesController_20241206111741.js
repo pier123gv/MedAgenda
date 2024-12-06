@@ -12,38 +12,10 @@ export const getAllPacientes = async (req, res) => {
 };
 
 
-export const deletePaciente = async (req, res) => {
-  const pacienteId = req.params.id;
-  console.log(`Deleting patient with ID: ${pacienteId}`);
+export const deletePaciente = async(req, res) => {
+  const query = 'DELETE * FROM pacientes WHERE ';
 
-  try {
-    // Disable foreign key checks
-    await connection.execute('SET FOREIGN_KEY_CHECKS = 0');
-
-    // Perform the delete operation
-    const deletePacienteQuery = 'DELETE FROM pacientes WHERE id_paciente = ?';
-    const [result] = await connection.execute(deletePacienteQuery, [pacienteId]);
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: 'Patient not found' });
-    }
-
-    // Re-enable foreign key checks
-    await connection.execute('SET FOREIGN_KEY_CHECKS = 1');
-
-    res.status(200).json({ message: 'Patient deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting patient:', error);
-    
-    // Re-enable foreign key checks in case of error
-    await connection.execute('SET FOREIGN_KEY_CHECKS = 1');
-
-    res.status(500).json({ message: 'Failed to delete patient' });
-  }
 };
-
-
-
 
 
 // Agregar un nuevo paciente
